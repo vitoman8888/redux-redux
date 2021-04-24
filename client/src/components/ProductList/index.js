@@ -7,11 +7,16 @@ import spinner from "../../assets/spinner.gif"
 import { useStoreContext } from '../../utils/GlobalState';
 import { UPDATE_PRODUCTS } from '../../utils/actions';
 import { idbPromise } from "../../utils/helpers";
+import { useSelector, useDispatch } from 'react-redux';
+import { updateProductsRx } from '../../actions'
 
 function ProductList() {
   const [state, dispatch] = useStoreContext();
 
   const { currentCategory } = state;
+  const rxCurrentCategory = useSelector(staterx => staterx.currentCategory);
+  const rxProducts = useSelector(staterx => staterx.products.prods);
+  const rxDispatch = useDispatch();
 
   const { loading, data } = useQuery(QUERY_PRODUCTS);
 
@@ -19,11 +24,8 @@ function ProductList() {
     // if there's data to be stored
     if (data) {
       // let's store it in the global state object
-      dispatch({
-        type: UPDATE_PRODUCTS,
-        products: data.products
-      });
-  
+      data.products.forEach(prod => rxDispatch(updateProductsRx(prod)));
+      
       // but let's also take each product and save it to IndexedDB using the helper function 
       data.products.forEach((product) => {
         idbPromise('products', 'put', product);
@@ -32,25 +34,24 @@ function ProductList() {
       // since we're offline, get all of the data from the `products` store
       idbPromise('products', 'get').then((products) => {
         // use retrieved data to set global state for offline browsing
-        dispatch({
-          type: UPDATE_PRODUCTS,
-          products: products
-        });
+        products.forEach(prod => rxDispatch(updateProductsRx(prod)));
       });
     }
   }, [data, loading, dispatch]);
 
   function filterProducts() {
-    if (!currentCategory) {
-      return state.products;
+    if (!rxCurrentCategory) {
+      //return state.products;
+      return rxProducts;
     }
-    return state.products.filter(product => product.category._id === currentCategory);
+    //return state.products.filter(product => product.category._id === rxCurrentCategory);
+    return rxProducts.filter(product => product.category._id === rxCurrentCategory);
   }
 
   return (
     <div className="my-2">
       <h2>Our Products:</h2>
-      {state.products.length ? (
+      {rxProducts.length ? (
         <div className="flex-row">
             {filterProducts().map(product => (
                 <ProductItem

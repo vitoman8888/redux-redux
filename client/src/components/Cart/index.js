@@ -2,11 +2,13 @@ import React, { useEffect } from 'react';
 import CartItem from '../CartItem';
 import Auth from '../../utils/auth';
 import { useStoreContext } from '../../utils/GlobalState';
-import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from '../../utils/actions';
+import { ADD_MULTIPLE_TO_CART } from '../../utils/actions';
 import { idbPromise } from "../../utils/helpers";
 import { QUERY_CHECKOUT } from '../../utils/queries';
 import { loadStripe } from '@stripe/stripe-js';
 import { useLazyQuery } from '@apollo/react-hooks';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleCartRx } from '../../actions';
 import './style.css';
 
 const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
@@ -14,6 +16,8 @@ const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 const Cart = () => {
 
     const [state, dispatch] = useStoreContext();
+    const rxCartOpen = useSelector(state => state.cartOpen);
+    const rxDispatch = useDispatch();
 
     const [getCheckout, { data }] = useLazyQuery(QUERY_CHECKOUT);
 
@@ -37,7 +41,8 @@ const Cart = () => {
     }, [state.cart.length, dispatch]);
 
     function toggleCart() {
-        dispatch({ type: TOGGLE_CART });
+        //dispatch({ type: TOGGLE_CART });
+        rxDispatch(toggleCartRx());
     }
 
     function calculateTotal() {
@@ -62,7 +67,7 @@ const Cart = () => {
         });
     }
 
-    if (!state.cartOpen) {
+    if (!rxCartOpen) {
         return (
           <div className="cart-closed" onClick={toggleCart}>
             <span
