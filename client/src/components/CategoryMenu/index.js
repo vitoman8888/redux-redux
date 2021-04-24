@@ -8,8 +8,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCategoryRx, updateCategoriesRx } from '../../actions';
 
 function CategoryMenu() {
-  const [state, dispatch] = useStoreContext();
-  const { categories } = state;
 
   const rxCategory = useSelector(staterx => staterx.categories.cats);
   const rxDispatch = useDispatch();
@@ -21,10 +19,6 @@ function CategoryMenu() {
     console.log("CatMenu:useEffect start = " + loading);
     if (categoryData) {
       // execute our dispatch function with our action object indicating the type of action and the data to set our state for categories to
-      //dispatch({
-      //  type: UPDATE_CATEGORIES,
-      //  categories: categoryData.categories
-      //});
       categoryData.categories.forEach(cat => rxDispatch(updateCategoriesRx(cat)));
 
       categoryData.categories.forEach(category => {
@@ -32,14 +26,10 @@ function CategoryMenu() {
       });
     }   else if (loading) {
       idbPromise('categories', 'get').then(categories => {
-        //dispatch({
-        //  type: UPDATE_CATEGORIES,
-        //  categories: categories
-        //});
         categories.forEach(cat => rxDispatch(updateCategoriesRx(cat)));
       });
     }
-  }, [categoryData, dispatch]);
+  }, [categoryData, rxDispatch]);
 
   const handleClick = id => {
     rxDispatch(setCategoryRx(id));
