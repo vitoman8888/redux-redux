@@ -11,9 +11,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateProductsRx } from '../../actions'
 
 function ProductList() {
-  const [state, dispatch] = useStoreContext();
+  //const [state, dispatch] = useStoreContext();
 
-  const { currentCategory } = state;
+  //const { currentCategory } = state;
   const rxCurrentCategory = useSelector(staterx => staterx.currentCategory);
   const rxProducts = useSelector(staterx => staterx.products.prods);
   const rxDispatch = useDispatch();
@@ -37,14 +37,12 @@ function ProductList() {
         products.forEach(prod => rxDispatch(updateProductsRx(prod)));
       });
     }
-  }, [data, loading, dispatch]);
+  }, [data, loading, rxDispatch]);
 
   function filterProducts() {
     if (!rxCurrentCategory) {
-      //return state.products;
       return rxProducts;
     }
-    //return state.products.filter(product => product.category._id === rxCurrentCategory);
     return rxProducts.filter(product => product.category._id === rxCurrentCategory);
   }
 
