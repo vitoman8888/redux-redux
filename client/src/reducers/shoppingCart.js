@@ -12,7 +12,7 @@ const shoppingCartReducer = (state = {cart:[]}, action) => {
         case "ADD_MULTIPLE_TO_CART":
             const newState = state.cart.map((item) => item);
             action.payload.products.forEach(item => {
-                console.log("ADD MULT", item)
+                //console.log("ADD MULT", item)
                 const isLoaded = newState.findIndex(item2 => item2._id === item._id);
                 if (isLoaded === -1) {
                     newState.push(item);

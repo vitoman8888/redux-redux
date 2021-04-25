@@ -1,5 +1,5 @@
 const productsReducer = (state = {prods:[]}, action) => {
-    console.log("ProductReducer  ", state, action);
+    //console.log("ProductReducer  ", state, action);
     switch (action.type) {
         case "UPDATE_PRODUCTS":
             const newState = state.prods.map((item) => item);
