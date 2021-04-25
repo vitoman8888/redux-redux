@@ -1,37 +1,26 @@
 import React from 'react';
-import { useStoreContext } from '../../utils/GlobalState';
-import { REMOVE_FROM_CART, UPDATE_CART_QUANTITY } from '../../utils/actions';
 import { idbPromise } from "../../utils/helpers";
+import { useDispatch } from 'react-redux';
+import { removeProductFromCart, updateQuantityInCart } from '../../actions';
+
 
 const CartItem = ({ item }) => {
 
-    const [, dispatch] = useStoreContext();
+    const rxDispatch = useDispatch();
 
     const removeFromCart = item => {
-        dispatch({
-            type: REMOVE_FROM_CART,
-            _id: item._id
-          });
-          idbPromise('cart', 'delete', { ...item });
+        rxDispatch(removeProductFromCart(item._id));
+        idbPromise('cart', 'delete', { ...item });
     };
 
     const onChange = (e) => {
         const value = e.target.value;
       
         if (value === '0') {
-            dispatch({
-                type: REMOVE_FROM_CART,
-                _id: item._id
-            });
-            
+            rxDispatch(removeProductFromCart(item._id));
             idbPromise('cart', 'delete', { ...item });
         } else {
-            dispatch({
-                type: UPDATE_CART_QUANTITY,
-                _id: item._id,
-                purchaseQuantity: parseInt(value)
-            });
-
+            rxDispatch(updateQuantityInCart(item._id, parseInt(value)));
             idbPromise('cart', 'put', { ...item, purchaseQuantity: parseInt(value) });
         }
     };
